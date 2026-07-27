@@ -1,0 +1,29 @@
+.mainBlock {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.posts {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 15px;
+}
+
+.addPost {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    padding: 8px 0;
+    border-radius: 25px;
+    width: 100%;
+
+    p {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 18px;
+    }
+}

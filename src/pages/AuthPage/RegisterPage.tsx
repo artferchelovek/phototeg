@@ -21,7 +21,7 @@ export default function RegisterPage() {
   };
   return (
     <div className={styles.authBlock}>
-      <div>
+      <div className={styles.inputBlock}>
         <p>Имя пользователя</p>
         <input
           value={username}
@@ -30,7 +30,7 @@ export default function RegisterPage() {
           type="text"
         />
       </div>
-      <div>
+      <div className={styles.inputBlock}>
         <p>Почта</p>
         <input
           value={email}
@@ -39,7 +39,7 @@ export default function RegisterPage() {
           type="email"
         />
       </div>
-      <div>
+      <div className={styles.inputBlock}>
         <p>Пароль</p>
         <input
           value={password}
@@ -48,7 +48,7 @@ export default function RegisterPage() {
         />
       </div>
 
-      <button onClick={() => register()}>Зарегистрироваться</button>
+      <button className={styles.entryButton} onClick={() => register()}>Зарегистрироваться</button>
     </div>
   );
 }

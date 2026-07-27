@@ -8,6 +8,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const login = async () => {
     const response = await loginUser({
@@ -16,10 +17,11 @@ export default function LoginPage() {
     });
 
     if (response.success) navigate("/");
+    if (!response.success && response.error) setError(response.error);
   };
   return (
     <div className={styles.authBlock}>
-      <div>
+      <div className={styles.inputBlock}>
         <p>Почта</p>
         <input
           value={email}
@@ -28,7 +30,7 @@ export default function LoginPage() {
           type="email"
         />
       </div>
-      <div>
+      <div className={styles.inputBlock}>
         <p>Пароль</p>
         <input
           value={password}
@@ -37,7 +39,11 @@ export default function LoginPage() {
         />
       </div>
 
-      <button onClick={() => login()}>Войти</button>
+      <p className={styles.error}>{error}</p>
+
+      <button className={styles.entryButton} onClick={() => login()}>
+        Войти
+      </button>
     </div>
   );
 }

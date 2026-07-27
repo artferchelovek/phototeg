@@ -48,4 +48,17 @@ export class PostController {
       });
     }
   }
+
+  static async getAllPosts(req: AuthRequest, res: Response) {
+    try {
+      const posts = await PostService.getAllPosts();
+
+      return res.status(200).json(posts);
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({
+        error: "Failed to get all posts",
+      });
+    }
+  }
 }
