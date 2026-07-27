@@ -1,0 +1,26 @@
+.header {
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    top: 0;
+    z-index: 100;
+    background: var(--md-sys-color-background);
+
+    padding: 12px;
+
+    .title {
+        font-family: Montserrat, sans-serif;
+        font-weight: 500;
+        font-size: 24px;
+        color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .profile {
+        background: var(--md-sys-color-secondary-container);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border-radius: 25px;
+    }
+}

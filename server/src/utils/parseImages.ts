@@ -17,7 +17,7 @@ export const extractImages = (response: DiskResponse) => {
   return images
     .map((image) => {
       const defaultSize = image.sizes.find(
-        (size) => size.name.toUpperCase() === "ORIGINAL",
+        (size) => size.name.toUpperCase() === "M",
       );
 
       return defaultSize ? defaultSize.url : null;
