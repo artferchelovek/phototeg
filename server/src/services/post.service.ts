@@ -42,4 +42,18 @@ export class PostService {
 
     return post;
   }
+
+  static async getAllPosts() {
+    const posts = await prisma.post.findMany({
+      include: {
+        images: true,
+      },
+    });
+
+    if (!posts.length) {
+      throw new Error("No posts found");
+    }
+
+    return posts;
+  }
 }

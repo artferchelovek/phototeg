@@ -1,75 +1,133 @@
-# React + TypeScript + Vite
+# Phototeg — Инструкция по развертыванию (Deployment Guide)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Полный стек проекта включает:
+- **Frontend**: React 19 + TypeScript + Vite (Порт: `3000`)
+- **Backend**: Node.js + Express + Prisma ORM (Порт: `4000`)
+- **Database**: PostgreSQL 16 Alpine (Порт: `5432`)
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Быстрый запуск на сервере через Docker Compose
 
-## React Compiler
+### 1. Клонирование репозитория на сервер
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+git clone <URL_ВАШЕГО_РЕПОЗИТОРИЯ>
+cd phototeg
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2. Настройка файла `.env`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Создайте файл `.env` на сервере на основе шаблона `.env.example`:
 
+```bash
+cp .env.example .env
 ```
+
+Отредактируйте `.env` через `nano .env` или `vim .env` и укажите боевые значения:
+
+```env
+# ==========================================
+# 1. Параметры базы данных PostgreSQL
+# ==========================================
+POSTGRES_USER=phototeg_user
+POSTGRES_PASSWORD=СГЕНЕРИРУЙТЕ_СЛОЖНЫЙ_ПАРОЛЬ
+POSTGRES_DB=phototeg
+POSTGRES_PORT=5432
+
+# ==========================================
+# 2. Настройки бэкенда (Server)
+# ==========================================
+SERVER_PORT=4000
+# ВНИМАНИЕ: Хост базы данных внутри Docker-сети — `postgres` (имя сервиса в docker-compose)
+DATABASE_URL=postgresql://phototeg_user:СГЕНЕРИРУЙТЕ_СЛОЖНЫЙ_ПАРОЛЬ@postgres:5432/phototeg?schema=public
+JWT_SECRET=СГЕНЕРИРУЙТЕ_СЛОЖНЫЙ_СЕКРЕТНЫЙ_КЛЮЧ
+
+# ==========================================
+# 3. Настройки фронтенда (Client)
+# ==========================================
+CLIENT_PORT=3000
+
+# ВНИМАНИЕ: VITE_API_URL выполняются в браузере КЛИЕНТА.
+# Не используйте `localhost` на сервере! Укажите IP сервера или ваш домен.
+# Пример с IP:
+VITE_API_URL=http://<IP_ВАШЕГО_СЕРВЕРА>:4000/api
+# Пример с доменов:
+# VITE_API_URL=https://api.yourdomain.com/api
+
+# ==========================================
+# 4. Внешние токены и сервисы (если используются)
+# ==========================================
+OAUTH_TOKEN=ваш_токен_авторизации
+```
+
+> ⚠️ **КРИТИЧЕСКИ ВАЖНО ДЛЯ VITE_API_URL:**
+> Фронтенд работает в браузере пользователя (на компьютере или телефоне посетителя). Если указать `http://localhost:4000/api`, то браузер посетителя попытается отправить запрос на свой собственный ПК, а не на ваш сервер! Укажите **публичный IP сервера** или **доменное имя**.
+
+---
+
+### 3. Сборка и запуск контейнеров
+
+Запустите сборку и запуск всех сервисов в фоновом режиме:
+
+```bash
+docker compose up -d --build
+```
+
+Docker автоматически:
+1. Запустит PostgreSQL и дождётся его готовности (healthcheck).
+2. Соберет и запустит контейнер бэкенда (`phototeg_server`), автоматически применив миграции базы данных Prisma (`prisma db push`).
+3. Соберет и запустит контейнер фронтенда (`phototeg_client`).
+
+---
+
+### 4. Проверка статуса и логов
+
+Проверить статус запущенных контейнеров:
+```bash
+docker compose ps
+```
+
+Посмотреть логи всех сервисов:
+```bash
+docker compose logs -f
+```
+
+Посмотреть логи конкретного сервиса (например, бэкенда):
+```bash
+docker compose logs -f server
+```
+
+---
+
+### 5. Настройка брандмауэра (Firewall) на сервере
+
+Убедитесь, что порты открыты для внешних подключений (например, на Ubuntu через `ufw`):
+
+```bash
+sudo ufw allow 3000/tcp   # Порт фронтенда
+sudo ufw allow 4000/tcp   # Порт бэкенд API
+sudo ufw reload
+```
+
+---
+
+## 🛠 Команды для управления проектом на сервере
+
+- **Остановить проект:**
+  ```bash
+  docker compose down
+  ```
+
+- **Остановить проект с удалением сохранённых данных БД:**
+  ```bash
+  docker compose down -v
+  ```
+
+- **Пересобрать проект после обновления кода (`git pull`):**
+  ```bash
+  git pull
+  docker compose up -d --build
+  ```

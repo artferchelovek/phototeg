@@ -1,0 +1,68 @@
+.createPageBlock {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    p {
+        font-size: 24px;
+
+        font-family: 'Montserrat', sans-serif;
+
+        color: var(--md-sys-color-primary);
+    }
+
+    input {
+        background: var(--md-sys-color-surface-container);
+        color: var(--md-sys-color-on-surface);
+        border: none;
+        font-size: 18px;
+        outline: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+    }
+}
+
+.upload {
+    background: var(--md-sys-color-primary);
+    border: none;
+    border-radius: 25px;
+    color: var(--md-sys-color-on-primary);
+    padding: 6px 0;
+    font-size: 18px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.chooseUpload {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    background: var(--md-sys-color-primary-container);
+    border-radius: 25px;
+
+    p {
+        text-align: center;
+        flex: 1;
+        color: var(--md-sys-color-on-secondary-container);
+        padding: 8px;
+        border-radius: 17px;
+        transition: 0.1s ease-in-out;
+    }
+
+    .active {
+        background: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+    }
+}
